@@ -6,17 +6,12 @@ Servo baseServo;
 Servo armServo;
 Servo gripServo;
 Servo rotateGripServo;
-ServoSmooth servoSmooth20K1;
-ServoSmooth servoSmooth20K2;
+ServoSmooth servoSmooth;
 
 
-// NOT FINAL PINS
-// TAKE CARE!!!!!!
-const int servoPin20K1 = 3;
-const int servoPin20K2 = 5;
 
 // Define color sensor pins
-#define S0 4
+/*#define S0 4
 #define S1 5
 #define S2 2
 #define S3 7
@@ -76,39 +71,39 @@ int getBluePW() {
   PW = pulseIn(sensorOut, LOW);
   // Return the value
   return PW;
+}*/
+
+void moveSmoothServo(int upAndDownPosition, int delayTime = 0) {
+  servoSmooth.setTargetDeg(upAndDownPosition);
+  while (!servoSmooth.tick())
+    ;
+  Serial.println("Servo 20K 1 moved to position: " + (String)upAndDownPosition);
+  delay(delayTime);
 }
 
-void moveAllServos(int basePosition, int armPosition, int gripPosition, int rotateGripPosition, int delayTime = 0) {
-  gripServo.write(gripPosition);
-  Serial.print("Grip moved ");
-  delay(delayTime);
-
-  armServo.write(armPosition);
-  Serial.print("Arm moved ");
-  delay(delayTime);
+void moveAllServos(int basePosition, int armPosition, int gripPosition, int rotateGripPosition, int upAndDownPosition, int delayTime = 0) {
 
   baseServo.write(basePosition);
   Serial.print("Base moved ");
   delay(delayTime);
 
+  moveSmoothServo(upAndDownPosition, 2000);
+  Serial.print("Servo 20kg moved ");
+
+  armServo.write(armPosition);
+  Serial.print("Arm moved ");
+  delay(delayTime);
+
   rotateGripServo.write(rotateGripPosition);
   Serial.print("Rotate moved ");
+
+  // gripServo.write(gripPosition);
+  // Serial.print("Grip moved ");
+  // delay(delayTime);
 }
 
-void moveSmoothServo1(int position, int delayTime = 0) {
-  servoSmooth20K1.setTargetDeg(position);
-  while (!servoSmooth20K1.tick())
-    ;
-  Serial.println("Servo 20K 1 moved to position: " + (String)position);
-  delay(delayTime);
-}
 
-void moveSmoothServo2(int position, int delayTime = 0) {
-  servoSmooth20K2.setTargetDeg(position);
-  while (!servoSmooth20K2.tick());
-  Serial.println("Servo 20K 2 moved to position: " + (String)position);
-  delay(delayTime);
-}
+
 
 void moveBase(int basePosition, int delayTime = 0) {
   baseServo.write(basePosition);
@@ -139,15 +134,17 @@ void grip(int gripPosition, int delayTime = 0) {
 void goToRed() {
   Serial.println();
   Serial.println("Red detected  ");
-  int armPositionPick = 90;
+  int armPositionPick = 120;
   moveArm(armPositionPick, 2000);
+  int upAndDownPosition = 30;
+  moveSmoothServo(upAndDownPosition, 2000);
   int basePositionPick = 20;
   moveBase(basePositionPick, 2000);
-  armPositionPick = 50;
+  armPositionPick = 150;
   moveArm(armPositionPick, 2000);
 }
 
-void goToGreen() {
+/*void goToGreen() {
   Serial.println();
   Serial.println("Green detected  ");
   int armPositionPick = 90;
@@ -167,11 +164,11 @@ void goToBlue() {
   moveBase(basePositionPick, 2000);
   armPositionPick = 50;
   moveArm(armPositionPick, 2000);
-}
+}*/
 
 
 // Function to detect the color & move the SERVOs to the required location
-void getColor() {
+/*void getColor() {
   // Read Red Pulse Width
   int redCounter = 0;
   int blueCounter = 0;
@@ -211,7 +208,7 @@ void getColor() {
     goToGreen();
   else if (blueCounter > redCounter && blueCounter > greenCounter)
     goToBlue();
-}
+}*/
 
 
 // Function to attach servos to pins
@@ -223,15 +220,10 @@ void attachServos() {
 }
 
 void attachServos20K() {
-  servoSmooth20K1.attach(servoPin20K1, 400, 2400);  // Attach servo to pin 9
-  servoSmooth20K1.setAutoDetach(true);
-  servoSmooth20K1.setSpeed(140);  // Set speed value
-  servoSmooth20K1.setAccel(0);
-
-  servoSmooth20K2.attach(servoPin20K2, 400, 2400);  // Attach servo to pin 9
-  servoSmooth20K2.setAutoDetach(true);
-  servoSmooth20K2.setSpeed(140);  // Set speed value
-  servoSmooth20K2.setAccel(0);
+  servoSmooth.attach(5, 400, 2400);  // Attach servo to pin 5
+  servoSmooth.setAutoDetach(true);
+  servoSmooth.setSpeed(100);  // Set speed value
+  servoSmooth.setAccel(0);
 }
 
 // Function to initialize servo positions
@@ -240,22 +232,25 @@ void initializePositions() {
   int armPositionInitial = 90;
   int gripPositionInitial = 30;
   int rotateGripPositionInitial = 90;
-  moveAllServos(basePositionInitial, armPositionInitial, gripPositionInitial, rotateGripPositionInitial);
+  int upAndDownPosition = 0;
+  moveAllServos(basePositionInitial, armPositionInitial, gripPositionInitial, rotateGripPositionInitial, upAndDownPosition, 2000);
 }
 
 void goToLaundry() {
   int basePositionLaundry = 0;
-  int armPositionLaundry = 50;
+  int armPositionLaundry = 150;
   int gripPositionLaundry = 30;
   int rotateGripPositionLaundry = 90;
-  moveAllServos(basePositionLaundry, armPositionLaundry, gripPositionLaundry, rotateGripPositionLaundry, 1000);
+  int upAndDownPosition = 100;
+  moveAllServos(basePositionLaundry, armPositionLaundry, gripPositionLaundry, rotateGripPositionLaundry, upAndDownPosition, 1000);
 }
 
 void pickAndDetectAndRelease() {
 
   int gripPositionPick = 90;
   grip(gripPositionPick, 2000);
-  getColor();
+  goToRed();
+  //getColor();
   gripPositionPick = 30;
   grip(gripPositionPick, 3000);
 }
@@ -270,15 +265,17 @@ void makeLaundry() {
 
 void setup() {
   Serial.begin(9600);
-  sensorInit();
+  //sensorInit();
   attachServos();
   attachServos20K();
   initializePositions();
-  delay(5000);
+  delay(3000);
+  makeLaundry();
+  //delay(2000);
 }
 
 void loop() {
   // // Main code will go here
-  makeLaundry();
-  delay(2000);
+  // makeLaundry();
+  // delay(2000);
 }
