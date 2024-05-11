@@ -137,7 +137,7 @@ void goToRed() {
   Serial.println();
   Serial.println("Red detected  ");
   int armPositionPick = 60;
-  moveSmoothServoTwo(armPositionPick, 2000);
+  moveSmoothServoTwo(armPositionPick, 1000);
   int basePositionPick = 20;
   moveBase(basePositionPick, 2000);
   armPositionPick = 0;
@@ -150,7 +150,7 @@ void goToGreen() {
   Serial.println();
   Serial.println("Green detected  ");
   int armPositionPick = 60;
-  moveSmoothServoTwo(armPositionPick, 2000);
+  moveSmoothServoTwo(armPositionPick, 1000);
   int basePositionPick = 50;
   moveBase(basePositionPick, 2000);
   armPositionPick = 0;
@@ -161,8 +161,9 @@ void goToGreen() {
 
 void goToBlue() {
   Serial.println();
+  Serial.println("Blue detected  ");
   int armPositionPick = 60;
-  moveSmoothServoTwo(armPositionPick, 2000);
+  moveSmoothServoTwo(armPositionPick, 1000);
   int basePositionPick = 100;
   moveBase(basePositionPick, 2000);
   armPositionPick = 0;
@@ -172,9 +173,11 @@ void goToBlue() {
 }
 
 void goToWhite() {
+  Serial.println();
+  Serial.println("White detected  ");
   int armPositionPick = 60;
-  moveSmoothServoTwo(armPositionPick, 2000);
-  int basePositionPick = 40;
+  moveSmoothServoTwo(armPositionPick, 1000);
+  int basePositionPick = 130;
   moveBase(basePositionPick, 2000);
   armPositionPick = 0;
   moveSmoothServoTwo(armPositionPick, 1000);
@@ -182,8 +185,10 @@ void goToWhite() {
   moveSmoothServo(upAndDownPosition, 1000);
 }
 void goToBlack() {
+  Serial.println();
+  Serial.println("Black detected  ");
   int armPositionPick = 60;
-  moveSmoothServoTwo(armPositionPick, 2000);
+  moveSmoothServoTwo(armPositionPick, 1000);
   int basePositionPick = 70;
   moveBase(basePositionPick, 2000);
   armPositionPick = 0;
@@ -216,17 +221,17 @@ void getColor() {
     bluePW = getBluePW();
     delay(200);  // Delay to stabilize sensor
 
-    if ((redPW < greenPW && redPW < bluePW))  //Detect Red Color
+    if ((bluePW < 100 && redPW < 100 && greenPW < 100))  //Detect White Color
+      whiteCounter++;
+    else if ((bluePW > 250 && redPW > 250 && greenPW > 250))  //Detect Black Color
+      blackCounter++;
+    else if ((redPW < greenPW && redPW < bluePW))  //Detect Red Color
       redCounter++;
-    else if ((greenPW <= redPW && greenPW <= bluePW))  //Detect Green Color
+    else if ((greenPW < redPW && greenPW < bluePW))  //Detect Green Color
       greenCounter++;
     else if ((bluePW < redPW && bluePW < greenPW))  //Detect Blue Color
       blueCounter++;
     // TO DO: CALIBRATION OF WHITE & BLACK COLORS
-    else if ((bluePW < redPW && bluePW < greenPW))  //Detect Blue Color
-      whiteCounter++;
-    else if ((bluePW < redPW && bluePW < greenPW))  //Detect Blue Color
-      blackCounter++;
     Serial.println("///////////////////////////////////////////");
     Serial.print("Loop number: ");
     Serial.println(i + 1);
@@ -282,12 +287,12 @@ void initializePositions() {
   moveAllServos(basePositionInitial, armPositionInitial, gripPositionInitial, rotateGripPositionInitial, upAndDownPosition);
 }
 
-void goToLaundry() {
+void goToLaundry(int pieceNumber) {
   int basePositionLaundry = 0;
   int armPositionLaundry = 0;
   int gripPositionLaundry = 30;
   int rotateGripPositionLaundry = 90;
-  int upAndDownPosition = 60;
+  int upAndDownPosition = 60 + pieceNumber * 5;
   moveAllServos(basePositionLaundry, armPositionLaundry, gripPositionLaundry, rotateGripPositionLaundry, upAndDownPosition, 1000);
 }
 
@@ -295,7 +300,6 @@ void pickAndDetectAndRelease() {
 
   int gripPositionPick = 90;
   grip(gripPositionPick, 1000);
-  //goToRed();
   getColor();
   gripPositionPick = 30;
   grip(gripPositionPick, 2000);
@@ -304,24 +308,27 @@ void pickAndDetectAndRelease() {
 }
 
 void makeLaundry() {
-  goToLaundry();
-  delay(1000);
-  pickAndDetectAndRelease();
-  initializePositions();
+  for (int i = 0; i < 8; ++i) {
+    goToLaundry(i);
+    delay(1000);
+    pickAndDetectAndRelease();
+    initializePositions();
+  }
 }
 
 
 
 void setup() {
   Serial.begin(9600);
-  //sensorInit();
+  sensorInit();
   attachServos();
   attachServos20K();
   initializePositions();
   delay(3000);
   makeLaundry();
+  delay(2000);
 }
 
 void loop() {
-  // // Main code will go here
+  // Main code will go here
 }
