@@ -99,9 +99,9 @@ void moveAllServos(int basePosition, int armPosition, int gripPosition, int rota
   moveSmoothServoTwo(armPosition, delayTime);
   Serial.print("Servo 20kg moved ");
 
-  // rotateGripServo.write(rotateGripPosition);
-  // Serial.print("Rotate moved ");
-  // delay(delayTime);
+  rotateGripServo.write(rotateGripPosition);
+  Serial.print("Rotate moved ");
+  delay(delayTime);
 
   gripServo.write(gripPosition);
   Serial.print("Grip moved ");
@@ -300,6 +300,28 @@ void goToLaundry(int pieceNumber) {
   moveAllServos(basePositionLaundry, armPositionLaundry, gripPositionLaundry, rotateGripPositionLaundry, upAndDownPosition, 1000);
 }
 
+
+void pickAndDetectAndRelease() {
+
+  int gripPositionPick = 100;
+  grip(gripPositionPick, 1000);
+  getColor();
+  gripPositionPick = 30;
+  grip(gripPositionPick, 2000);
+  int upAndDownPosition = 0;
+  moveSmoothServo(upAndDownPosition, 2000);
+}
+
+void makeLaundry() {
+  for (int i = 0; i < 8; ++i) {
+    goToLaundry(i);
+    delay(1000);
+    pickAndDetectAndRelease();
+    initializePositions();
+    delay(2000);
+  }
+}
+
 void goToWasher() {  // el yerooh le position el washer
   int basePositionLaundry = 0;
   int armPositionLaundry = 160;
@@ -324,6 +346,35 @@ void releaseFunction() {
   int gripPositionPick = 30;
   grip(gripPositionPick, 2000);
 }
+
+void catchBook(int basePosition = 90) {
+  baseServo.write(basePosition);
+  delay(1000);
+  int armPositionPick = 0;
+  moveSmoothServoTwo(armPositionPick, 1000);
+  int upAndDownPosition = 140;
+  moveSmoothServo(upAndDownPosition, 1000);
+  int gripPosition = 110;
+  gripServo.write(gripPosition);
+  delay(1000);
+}
+
+void deliverBook() {
+  int armPositionPick = 80;
+  moveSmoothServoTwo(armPositionPick, 1000);
+  int upAndDownPosition = 60;
+  moveSmoothServo(upAndDownPosition, 5000);
+  int basePosition = 180;
+  baseServo.write(basePosition);
+  delay(1000);
+  upAndDownPosition = 60;
+  moveSmoothServo(upAndDownPosition, 1000);
+  int gripPosition = 30;
+  gripServo.write(gripPosition);
+  delay(1000);
+}
+
+
 
 void washDish() {
 
@@ -360,38 +411,27 @@ void washDish() {
   releaseFunction();
 }
 
-void pickAndDetectAndRelease() {
-
-  int gripPositionPick = 100;
-  grip(gripPositionPick, 1000);
-  getColor();
-  gripPositionPick = 30;
-  grip(gripPositionPick, 2000);
-  int upAndDownPosition = 0;
-  moveSmoothServo(upAndDownPosition, 2000);
-}
-
-void makeLaundry() {
-  for (int i = 0; i < 8; ++i) {
-    goToLaundry(i);
-    delay(1000);
-    pickAndDetectAndRelease();
-    initializePositions();
-    delay(2000);
-  }
-}
-
 
 
 void setup() {
   Serial.begin(9600);
+
+  // LAUNDRY SORTING FUNCTION CALLS
   sensorInit();
   attachServos();
   attachServos20K();
   initializePositions();
   delay(3000);
   makeLaundry();
-  // delay(2000);
+
+  // ORGANIZING BOOKS FUNCTIONS CALLS
+  catchBook();
+  deliverBook();
+  initializePositions();
+  delay(2000);
+  catchBook(45);
+  deliverBook();
+  initializePositions();
 }
 
 void loop() {
