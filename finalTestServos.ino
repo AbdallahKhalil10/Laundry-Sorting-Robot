@@ -10,13 +10,18 @@ ServoSmooth servoSmooth;
 ServoSmooth servoSmooth2;
 
 
-
 // Define color sensor pins
 #define S0 22
 #define S1 23
 #define S2 24
 #define S3 25
 #define sensorOut 26
+
+#define brush 33
+#define pump 34
+#define dryer 35
+int countWashing = 0;
+
 
 // Variables for Color Pulse Width Measurements
 int redPW = 0;
@@ -323,20 +328,67 @@ void makeLaundry() {
 }
 
 void goToWasher() {  // el yerooh le position el washer
+  moveSmoothServoTwo(120, 500);
   int basePositionLaundry = 0;
-  int armPositionLaundry = 160;
+  int armPositionLaundry = 120;
   int gripPositionLaundry = 100;
   int rotateGripPositionLaundry = 0;
   int upAndDownPosition = 0;
   moveAllServos(basePositionLaundry, armPositionLaundry, gripPositionLaundry, rotateGripPositionLaundry, upAndDownPosition, 1000);
 }
 void goToDryer() {  // el yerooh le position el washer
+  moveSmoothServoTwo(120, 500);
   int basePositionLaundry = 180;
-  int armPositionLaundry = 160;
+  int armPositionLaundry = 120;
   int gripPositionLaundry = 100;
-  int rotateGripPositionLaundry = 160;
+  int rotateGripPositionLaundry = 155;
   int upAndDownPosition = 0;
   moveAllServos(basePositionLaundry, armPositionLaundry, gripPositionLaundry, rotateGripPositionLaundry, upAndDownPosition, 1000);
+}
+void washDish() {
+  initializePositions(0);
+  releaseFunction();
+  delay(2000);
+  pickFunction();
+
+  goToWasher();
+  delay(0000);
+  digitalWrite(pump, 1);  //Pump ON
+  delay(0000);
+  digitalWrite(pump, 0);  //Pump OFF
+  delay(0000);
+
+  digitalWrite(brush, 1);  //Brush ON
+  delay(0000);
+  moveSmoothServoTwo(160, 500);
+  delay(0000);             // Zabato 3adad el seconds ely hayghsal feeha
+  digitalWrite(brush, 0);  //Brush OFF
+  delay(0000);
+  moveSmoothServoTwo(120, 500);
+
+  delay(0000);
+  digitalWrite(pump, 1);  //Pump ON
+  delay(2000);
+  digitalWrite(pump, 0);  //Pump OFF
+
+  initializePositions(0);
+  delay(2000);
+  moveRotate(155);
+  delay(2000);
+
+  // ye go lel dryer
+  goToDryer();
+  digitalWrite(dryer, 1);
+  delay(1000);
+  moveSmoothServoTwo(160, 500);
+  delay(2000);
+  digitalWrite(dryer, 0);
+  delay(2000);
+  moveSmoothServoTwo(120, 500);
+
+  initializePositions(180);
+  delay(2000);
+  releaseFunction();
 }
 void pickFunction() {
   int gripPositionPick = 100;  // b nafs el init position beta3 el grip
@@ -376,45 +428,19 @@ void deliverBook() {
 
 
 
-void washDish() {
-
-  initializePositions();
-  releaseFunction();
-  delay(2000);
-  pickFunction();
-  //function y pick
-
-  goToWasher();
-  //High pump
-  //delay
-  //low pump
-  //high brush
-  delay(2000);  // Zabato 3adad el seconds ely hayghsal feeha
-  //low brush
-  //High pump
-  //delay
-  //low pump
-
-  // ye go lel dryer
-  initializePositions();
-  delay(2000);
-  moveRotate(160);
-  delay(2000);
-  goToDryer();
-  //High dryer
-  //delay
-  //low dryer
-  delay(2000);
-
-  initializePositions(160);
-  delay(2000);
-  releaseFunction();
-}
-
 
 
 void setup() {
   Serial.begin(9600);
+
+  //Brush, Dryer, pump
+  pinMode(brush, OUTPUT);
+  pinMode(pump, OUTPUT);
+  pinMode(dryer, OUTPUT);
+
+  digitalWrite(brush, 0);
+  digitalWrite(pump, 0);
+  digitalWrite(dryer, 0);  
 
   // LAUNDRY SORTING FUNCTION CALLS
   sensorInit();
