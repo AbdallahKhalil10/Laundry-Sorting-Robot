@@ -12,11 +12,11 @@ ServoSmooth servoSmooth2;
 
 
 // Define color sensor pins
-#define S0 4
-#define S1 13
-#define S2 2
-#define S3 7
-#define sensorOut 8
+#define S0 22
+#define S1 23
+#define S2 24
+#define S3 25
+#define sensorOut 26
 
 // Variables for Color Pulse Width Measurements
 int redPW = 0;
@@ -136,11 +136,11 @@ void grip(int gripPosition, int delayTime = 0) {
 void goToRed() {
   Serial.println();
   Serial.println("Red detected  ");
-  int armPositionPick = 60;
+  int armPositionPick = 120;
   moveSmoothServoTwo(armPositionPick, 1000);
-  int basePositionPick = 20;
+  int basePositionPick = 30;
   moveBase(basePositionPick, 2000);
-  armPositionPick = 0;
+  armPositionPick = 160;
   moveSmoothServoTwo(armPositionPick, 1000);
   int upAndDownPosition = 60;
   moveSmoothServo(upAndDownPosition, 1000);
@@ -149,11 +149,11 @@ void goToRed() {
 void goToGreen() {
   Serial.println();
   Serial.println("Green detected  ");
-  int armPositionPick = 60;
+  int armPositionPick = 120;
   moveSmoothServoTwo(armPositionPick, 1000);
-  int basePositionPick = 50;
+  int basePositionPick = 60;
   moveBase(basePositionPick, 2000);
-  armPositionPick = 0;
+  armPositionPick = 160;
   moveSmoothServoTwo(armPositionPick, 1000);
   int upAndDownPosition = 60;
   moveSmoothServo(upAndDownPosition, 1000);
@@ -162,11 +162,11 @@ void goToGreen() {
 void goToBlue() {
   Serial.println();
   Serial.println("Blue detected  ");
-  int armPositionPick = 60;
+  int armPositionPick = 120;
   moveSmoothServoTwo(armPositionPick, 1000);
-  int basePositionPick = 100;
+  int basePositionPick = 120;
   moveBase(basePositionPick, 2000);
-  armPositionPick = 0;
+  armPositionPick = 160;
   moveSmoothServoTwo(armPositionPick, 1000);
   int upAndDownPosition = 60;
   moveSmoothServo(upAndDownPosition, 1000);
@@ -175,11 +175,11 @@ void goToBlue() {
 void goToWhite() {
   Serial.println();
   Serial.println("White detected  ");
-  int armPositionPick = 60;
+  int armPositionPick = 120;
   moveSmoothServoTwo(armPositionPick, 1000);
-  int basePositionPick = 130;
+  int basePositionPick = 150;
   moveBase(basePositionPick, 2000);
-  armPositionPick = 0;
+  armPositionPick = 160;
   moveSmoothServoTwo(armPositionPick, 1000);
   int upAndDownPosition = 60;
   moveSmoothServo(upAndDownPosition, 1000);
@@ -187,11 +187,11 @@ void goToWhite() {
 void goToBlack() {
   Serial.println();
   Serial.println("Black detected  ");
-  int armPositionPick = 60;
+  int armPositionPick = 120;
   moveSmoothServoTwo(armPositionPick, 1000);
-  int basePositionPick = 70;
+  int basePositionPick = 180;
   moveBase(basePositionPick, 2000);
-  armPositionPick = 0;
+  armPositionPick = 180;
   moveSmoothServoTwo(armPositionPick, 1000);
   int upAndDownPosition = 60;
   moveSmoothServo(upAndDownPosition, 1000);
@@ -221,9 +221,9 @@ void getColor() {
     bluePW = getBluePW();
     delay(200);  // Delay to stabilize sensor
 
-    if ((bluePW < 100 && redPW < 100 && greenPW < 100))  //Detect White Color
+    if ((bluePW < 200 && redPW < 200 && greenPW < 200))  //Detect White Color
       whiteCounter++;
-    else if ((bluePW > 250 && redPW > 250 && greenPW > 250))  //Detect Black Color
+    else if ((bluePW > 450 && redPW > 450 && greenPW > 450))  //Detect Black Color
       blackCounter++;
     else if ((redPW < greenPW && redPW < bluePW))  //Detect Red Color
       redCounter++;
@@ -241,6 +241,10 @@ void getColor() {
     Serial.println(greenCounter);
     Serial.print("blueCounter: ");
     Serial.println(blueCounter);
+    Serial.print("whiteCounter: ");
+    Serial.println(whiteCounter);
+    Serial.print("blackCounter: ");
+    Serial.println(blackCounter);
     Serial.println("///////////////////////////////////////////");
   }
 
@@ -278,27 +282,87 @@ void attachServos20K() {
 
 
 // Function to initialize servo positions
-void initializePositions() {
-  int basePositionInitial = 50;
-  int armPositionInitial = 0;
+void initializePositions(int rotate = 90) {
+  int basePositionInitial = 90;
+  int armPositionInitial = 160;
   int gripPositionInitial = 30;
-  int rotateGripPositionInitial = 90;
+  int rotateGripPositionInitial = rotate;
   int upAndDownPosition = 0;
   moveAllServos(basePositionInitial, armPositionInitial, gripPositionInitial, rotateGripPositionInitial, upAndDownPosition);
 }
 
 void goToLaundry(int pieceNumber) {
-  int basePositionLaundry = 0;
-  int armPositionLaundry = 0;
+  int basePositionLaundry = 90;
+  int armPositionLaundry = 160;
   int gripPositionLaundry = 30;
   int rotateGripPositionLaundry = 90;
-  int upAndDownPosition = 60 + pieceNumber * 5;
+  int upAndDownPosition = 60 + pieceNumber * 10;
   moveAllServos(basePositionLaundry, armPositionLaundry, gripPositionLaundry, rotateGripPositionLaundry, upAndDownPosition, 1000);
+}
+
+void goToWasher() {  // el yerooh le position el washer
+  int basePositionLaundry = 0;
+  int armPositionLaundry = 160;
+  int gripPositionLaundry = 100;
+  int rotateGripPositionLaundry = 0;
+  int upAndDownPosition = 0;
+  moveAllServos(basePositionLaundry, armPositionLaundry, gripPositionLaundry, rotateGripPositionLaundry, upAndDownPosition, 1000);
+}
+void goToDryer() {  // el yerooh le position el washer
+  int basePositionLaundry = 180;
+  int armPositionLaundry = 160;
+  int gripPositionLaundry = 100;
+  int rotateGripPositionLaundry = 160;
+  int upAndDownPosition = 0;
+  moveAllServos(basePositionLaundry, armPositionLaundry, gripPositionLaundry, rotateGripPositionLaundry, upAndDownPosition, 1000);
+}
+void pickFunction() {
+  int gripPositionPick = 100;  // b nafs el init position beta3 el grip
+  grip(gripPositionPick, 1000);
+}
+void releaseFunction() {
+  int gripPositionPick = 30;
+  grip(gripPositionPick, 2000);
+}
+
+void washDish() {
+
+  initializePositions();
+  releaseFunction();
+  delay(2000);
+  pickFunction();
+  //function y pick
+
+  goToWasher();
+  //High pump
+  //delay
+  //low pump
+  //high brush
+  delay(2000);  // Zabato 3adad el seconds ely hayghsal feeha
+  //low brush
+  //High pump
+  //delay
+  //low pump
+
+  // ye go lel dryer
+  initializePositions();
+  delay(2000);
+  moveRotate(160);
+  delay(2000);
+  goToDryer();
+  //High dryer
+  //delay
+  //low dryer
+  delay(2000);
+
+  initializePositions(160);
+  delay(2000);
+  releaseFunction();
 }
 
 void pickAndDetectAndRelease() {
 
-  int gripPositionPick = 90;
+  int gripPositionPick = 100;
   grip(gripPositionPick, 1000);
   getColor();
   gripPositionPick = 30;
@@ -313,6 +377,7 @@ void makeLaundry() {
     delay(1000);
     pickAndDetectAndRelease();
     initializePositions();
+    delay(2000);
   }
 }
 
@@ -326,7 +391,7 @@ void setup() {
   initializePositions();
   delay(3000);
   makeLaundry();
-  delay(2000);
+  // delay(2000);
 }
 
 void loop() {
