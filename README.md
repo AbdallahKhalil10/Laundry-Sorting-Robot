@@ -1,4 +1,4 @@
-## Robotic Arm Color Sorting Project
+# Robotic Arm Color Sorting Project
 ## Overview
 This project is a robotic arm system that uses a TCS3200 color sensor to detect colors and sorts clothes accordingly. The robotic arm utilizes servo motors (Servo 9966 and LF-20MG) for movement. The project leverages the servo and servoSmooth libraries to control the servos and perform precise movements.
 
@@ -14,7 +14,7 @@ LF-20MG Servo: Another servo used for the robotic arm's movement.
 servo: Used for controlling the servo motors.
 servoSmooth: Used to ensure smooth movements of the servos.
 ## Installation
-# Prerequisites
+### Prerequisites
 Arduino IDE installed on your computer.
 The servo and servoSmooth libraries installed in the Arduino IDE.
 Library Installation
