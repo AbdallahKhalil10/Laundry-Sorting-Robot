@@ -4,6 +4,7 @@ This project is a robotic arm system that uses a TCS3200 color sensor to detect 
 
 ## Features
 Color Detection: Uses the TCS3200 color sensor to detect colors based on the combination of red, green, and blue pulse widths.
+
 Robotic Arm: Equipped with Servo 9966 and LF-20MG servos to pick and sort clothes.
 Smooth Servo Movements: Implements various functions to ensure smooth and accurate movements using the servo and servoSmooth libraries.
 ## Hardware Components
