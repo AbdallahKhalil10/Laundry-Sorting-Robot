@@ -23,3 +23,7 @@ Open the Arduino IDE.
 Go to Sketch -> Include Library -> Manage Libraries.
 In the Library Manager, search for servo and servoSmooth.
 Click on each library and install them.
+
+## How to use:
+You can find the code for the sensor in the file named "colorSensorCode_TCS3200," which provides detailed functionality of the TCS3200 color sensor. 
+The file "laundrySortingCode" demonstrates how the robotic arm operates in conjunction with the sensor to perform the sorting tasks.
